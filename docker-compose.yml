@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+      POSTGRES_DB: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  mongodb:
+    image: mongo:7
+    container_name: mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  app:
+    image: node:22-alpine
+    container_name: app
+    working_dir: /usr/src/app
+    depends_on:
+      - postgres
+      - mongodb
+    environment:
+      # PostgreSQL
+      PG_HOST: postgres
+      PG_PORT: "5432"
+      PG_USER: postgres
+      PG_PASSWORD: 1234
+      PG_DB: postgres
+      # Mongo
+      MONGO_URI: mongodb://admin:password@mongodb:27017/?authSource=admin
+      # Optional
+      DB_SSL: "false"
+      PORT: "3000"
+    volumes:
+      - ./:/usr/src/app
+    command: sh -c "npm ci || npm i && node index.js"
+    ports:
+      - "3000:3000"
+
+volumes:
+  pg_data:
+  mongo_data:
+
+
