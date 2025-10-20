@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Acadêmica</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="/css/estilo.css">
+</head>
+<body>
+    <div class="container-wrapper">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <div class="navbar-brand-container">
+                    <div class="logo-container-nav">
+                        <img src="/images/logo.svg" alt="SA" />
+                    </div>
+                    <span class="navbar-brand-text">Sistema Acadêmico</span>
+                </div>
+                
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/home">
+                                <i class="bi bi-house-fill"></i> Home
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-people-fill"></i> Alunos
+                            </a>
+                            <ul class="dropdown-menu">
+                                {{#if admin}}
+                                <li><a class="dropdown-item" href="/alunos/criar"><i class="bi bi-plus-circle"></i> Criar</a></li>
+                                {{/if}}
+                                <li><a class="dropdown-item" href="/alunos"><i class="bi bi-list-ul"></i> Listar</a></li>
+                            </ul>
+                        </li>
+                        
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-book-fill"></i> Disciplinas
+                            </a>
+                            <ul class="dropdown-menu">
+                                {{#if admin}}
+                                <li><a class="dropdown-item" href="/disciplinas/criar"><i class="bi bi-plus-circle"></i> Criar</a></li>
+                                {{/if}}
+                                <li><a class="dropdown-item" href="/disciplinas"><i class="bi bi-list-ul"></i> Listar</a></li>
+                            </ul>
+                        </li>
+                        
+                        {{#if admin}}
+                        <li class="nav-item">
+                            <a class="nav-link" href="/matriculas">
+                                <i class="bi bi-clipboard-check-fill"></i> Matrículas
+                            </a>
+                        </li>
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logs">
+                                <i class="bi bi-file-text-fill"></i> Logs
+                            </a>
+                        </li>
+                        {{/if}}
+                        
+                        {{#if login}}
+                        <li class="nav-item d-none d-lg-block">
+                            <div class="user-info-nav">
+                                <i class="bi bi-person-circle"></i>
+                                <span class="user-name">{{login}}</span>
+                                {{#if admin}}<span class="badge bg-primary ms-2">Administrador</span>{{/if}}
+                            </div>
+                        </li>
+                        
+                        <li class="nav-item d-lg-none">
+                            <div class="user-info-mobile">
+                                <i class="bi bi-person-circle"></i>
+                                <span>{{login}}</span>
+                                {{#if admin}}<span class="badge bg-primary ms-2">Administrador</span>{{/if}}
+                            </div>
+                        </li>
+                        {{/if}}
+                        
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Logout">
+                                <i class="bi bi-box-arrow-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+            {{{body}}}
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/app.js"></script>
+    <script>
+        // Initialize Bootstrap tooltips
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    </script>
+</body>
+</html>
+

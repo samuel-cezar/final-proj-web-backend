@@ -45,4 +45,23 @@ router.post('/matricular', async (req, res) => {
     }
 });
 
+// POST /desmatricular
+router.post('/desmatricular', async (req, res) => {
+    try {
+        const { alunoId, disciplinaId } = req.body;
+
+        const aluno = await Aluno.findByPk(alunoId);
+        const disciplina = await Disciplina.findByPk(disciplinaId);
+
+        if (!aluno || !disciplina) {
+            return res.status(404).json({ error: 'Aluno ou disciplina não encontrado' });
+        }
+
+        await aluno.removeDisciplina(disciplina);
+        res.json({ message: 'Desmatrícula realizada com sucesso' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 module.exports = router;

@@ -1,0 +1,97 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-book-fill"></i> Lista de Disciplinas</span>
+                {{#if admin}}
+                <a href="/disciplinas/criar" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-circle"></i> Nova Disciplina
+                </a>
+                {{/if}}
+            </div>
+            <div class="card-body">
+                {{#if disciplinas.length}}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Código</th>
+                                <th>Nome</th>
+                                <th>Carga Horária</th>
+                                <th>Alunos</th>
+                                {{#if admin}}
+                                <th class="text-end">Ações</th>
+                                {{/if}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each disciplinas}}
+                            <tr>
+                                <td><strong>#{{this.id}}</strong></td>
+                                <td><span class="badge bg-info">{{this.codigo}}</span></td>
+                                <td>{{this.nome}}</td>
+                                <td>{{this.cargaHoraria}}h</td>
+                                <td>
+                                    {{#if this.alunos}}
+                                        {{#each this.alunos}}
+                                        <span class="badge bg-success me-1">{{this.nome}}</span>
+                                        {{/each}}
+                                    {{else}}
+                                        <span class="text-muted">Nenhum</span>
+                                    {{/if}}
+                                </td>
+                                {{#if ../admin}}
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="/disciplinas/editar/{{this.id}}" class="btn btn-warning btn-sm">
+                                            <i class="bi bi-pencil-fill"></i> Editar
+                                        </a>
+                                        <a href="/disciplinas/gerenciar-alunos/{{this.id}}" class="btn btn-info btn-sm">
+                                            <i class="bi bi-people"></i> Alunos
+                                        </a>
+                                        <button class="btn btn-danger btn-sm" onclick="deletarDisciplina({{this.id}})">
+                                            <i class="bi bi-trash-fill"></i> Excluir
+                                        </button>
+                                    </div>
+                                </td>
+                                {{/if}}
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                    <div class="empty-state-text">Nenhuma disciplina cadastrada</div>
+                    <p class="text-muted">Comece adicionando uma nova disciplina ao sistema.</p>
+                    {{#if admin}}
+                    <a href="/disciplinas/criar" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle"></i> Adicionar Primeira Disciplina
+                    </a>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deletarDisciplina(id) {
+    if (confirm('Tem certeza que deseja excluir esta disciplina?')) {
+        fetch(`/api/disciplinas/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao excluir disciplina');
+            }
+        });
+    }
+}
+</script>
+

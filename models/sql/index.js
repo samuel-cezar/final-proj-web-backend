@@ -1,5 +1,6 @@
 const Aluno = require('./Aluno');
 const Disciplina = require('./Disciplina');
+const Usuario = require('./Usuario');
 
 // Relacionamento N:N
 Aluno.belongsToMany(Disciplina, {
@@ -16,5 +17,6 @@ Disciplina.belongsToMany(Aluno, {
 
 module.exports = {
     Aluno,
-    Disciplina
+    Disciplina,
+    Usuario
 };

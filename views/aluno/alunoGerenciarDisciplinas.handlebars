@@ -1,0 +1,108 @@
+<div class="row">
+    <div class="col-lg-10 offset-lg-1">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-book-half"></i> Gerenciar Disciplinas - {{aluno.nome}}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <!-- Disciplinas do Aluno -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Disciplinas Matriculadas</h5>
+                        {{#if aluno.disciplinas.length}}
+                        <div class="list-group">
+                            {{#each aluno.disciplinas}}
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <strong>{{this.nome}}</strong>
+                                    <br><small class="text-muted">{{this.codigo}}</small>
+                                </div>
+                                <button class="btn btn-danger btn-sm" onclick="removerDisciplina({{../aluno.id}}, {{this.id}})">
+                                    <i class="bi bi-x-circle"></i>
+                                </button>
+                            </div>
+                            {{/each}}
+                        </div>
+                        {{else}}
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i> Nenhuma disciplina matriculada ainda.
+                        </div>
+                        {{/if}}
+                    </div>
+                    
+                    <!-- Adicionar Nova Disciplina -->
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Adicionar Disciplina</h5>
+                        <form id="addDisciplinaForm">
+                            <div class="mb-3">
+                                <label for="disciplinaId" class="form-label">Selecione uma Disciplina</label>
+                                <select class="form-select" id="disciplinaId" name="disciplinaId" required>
+                                    <option value="">Escolha...</option>
+                                    {{#each todasDisciplinas}}
+                                    <option value="{{this.id}}">{{this.nome}} ({{this.codigo}})</option>
+                                    {{/each}}
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success w-100">
+                                <i class="bi bi-plus-circle"></i> Matricular
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                
+                <div class="mt-4">
+                    <a href="/alunos" class="btn btn-secondary">
+                        <i class="bi bi-arrow-left"></i> Voltar para Lista
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('addDisciplinaForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const disciplinaId = document.getElementById('disciplinaId').value;
+    
+    try {
+        const response = await fetch('/api/matriculas/matricular', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                alunoId: {{aluno.id}}, 
+                disciplinaId: parseInt(disciplinaId) 
+            })
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            alert('Erro ao matricular aluno');
+        }
+    } catch (error) {
+        alert('Erro ao matricular aluno');
+    }
+});
+
+async function removerDisciplina(alunoId, disciplinaId) {
+    if (confirm('Tem certeza que deseja remover esta disciplina?')) {
+        try {
+            const response = await fetch(`/api/matriculas/desmatricular`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ alunoId, disciplinaId })
+            });
+            
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao remover disciplina');
+            }
+        } catch (error) {
+            alert('Erro ao remover disciplina');
+        }
+    }
+}
+</script>
+

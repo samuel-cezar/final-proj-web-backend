@@ -1,0 +1,76 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-file-text-fill"></i> Logs de Acesso do Sistema</span>
+                <button class="btn btn-light btn-sm" onclick="atualizarLogs()">
+                    <i class="bi bi-arrow-clockwise"></i> Atualizar
+                </button>
+            </div>
+            <div class="card-body">
+                {{#if logs.length}}
+                <div class="table-responsive">
+                    <table class="table table-hover table-sm">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Método</th>
+                                <th>URL</th>
+                                <th>IP</th>
+                                <th>User Agent</th>
+                                <th>Data/Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody">
+                            {{#each logs}}
+                            <tr>
+                                <td><small>#{{this._id}}</small></td>
+                                <td>
+                                    {{#if (eq this.metodo 'GET')}}
+                                    <span class="badge bg-success">{{this.metodo}}</span>
+                                    {{else if (eq this.metodo 'POST')}}
+                                    <span class="badge bg-primary">{{this.metodo}}</span>
+                                    {{else if (eq this.metodo 'PUT')}}
+                                    <span class="badge bg-warning">{{this.metodo}}</span>
+                                    {{else if (eq this.metodo 'DELETE')}}
+                                    <span class="badge bg-danger">{{this.metodo}}</span>
+                                    {{else}}
+                                    <span class="badge bg-secondary">{{this.metodo}}</span>
+                                    {{/if}}
+                                </td>
+                                <td><code>{{this.url}}</code></td>
+                                <td>{{this.ip}}</td>
+                                <td><small>{{this.userAgent}}</small></td>
+                                <td>{{this.timestamp}}</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill"></i> <strong>Total de Logs:</strong> {{logs.length}} | Os logs são atualizados em tempo real.
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                    <div class="empty-state-text">Nenhum log registrado</div>
+                    <p class="text-muted">Os logs de acesso aparecerão aqui conforme as requisições forem feitas.</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function atualizarLogs() {
+    window.location.reload();
+}
+
+// Auto-atualizar logs a cada 10 segundos
+setInterval(atualizarLogs, 10000);
+</script>
+

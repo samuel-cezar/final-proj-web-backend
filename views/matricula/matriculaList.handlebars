@@ -1,0 +1,54 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-clipboard-check-fill"></i> Matrículas - Visão Geral
+            </div>
+            <div class="card-body">
+                {{#if matriculas.length}}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID Aluno</th>
+                                <th>Nome do Aluno</th>
+                                <th>Email</th>
+                                <th>ID Disciplina</th>
+                                <th>Disciplina</th>
+                                <th>Código</th>
+                                <th>Carga Horária</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each matriculas}}
+                            <tr>
+                                <td><strong>#{{this.aluno.id}}</strong></td>
+                                <td>{{this.aluno.nome}}</td>
+                                <td>{{this.aluno.email}}</td>
+                                <td><strong>#{{this.disciplina.id}}</strong></td>
+                                <td>{{this.disciplina.nome}}</td>
+                                <td><span class="badge bg-info">{{this.disciplina.codigo}}</span></td>
+                                <td>{{this.disciplina.cargaHoraria}}h</td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="mt-3">
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle-fill"></i> <strong>Total de Matrículas:</strong> {{matriculas.length}}
+                    </div>
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                    <div class="empty-state-text">Nenhuma matrícula registrada</div>
+                    <p class="text-muted">Matricule alunos em disciplinas para visualizar aqui.</p>
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
