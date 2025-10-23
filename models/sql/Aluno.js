@@ -11,14 +11,25 @@ const Aluno = sequelize.define('Aluno', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    email: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+            isEmail: true
+        }
+    },
+    dataNascimento: {
+        type: DataTypes.DATEONLY,
+        allowNull: false
+    },
     matricula: {
         type: DataTypes.STRING,
         unique: true,
-        allowNull: false
+        allowNull: true
     },
     curso: {
         type: DataTypes.STRING,
-        allowNull: false
+        allowNull: true
     }
 }, {
     tableName: 'alunos',

@@ -18,6 +18,8 @@
                                 <th>ID</th>
                                 <th>Nome</th>
                                 <th>Email</th>
+                                <th>Matrícula</th>
+                                <th>Curso</th>
                                 <th>Data Nascimento</th>
                                 <th>Disciplinas</th>
                                 {{#if admin}}
@@ -31,6 +33,8 @@
                                 <td><strong>#{{this.id}}</strong></td>
                                 <td>{{this.nome}}</td>
                                 <td>{{this.email}}</td>
+                                <td>{{#if this.matricula}}{{this.matricula}}{{else}}<span class="text-muted">-</span>{{/if}}</td>
+                                <td>{{#if this.curso}}{{this.curso}}{{else}}<span class="text-muted">-</span>{{/if}}</td>
                                 <td>{{this.dataNascimento}}</td>
                                 <td>
                                     {{#if this.disciplinas}}
