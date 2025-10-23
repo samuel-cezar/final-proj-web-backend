@@ -23,6 +23,10 @@ const PORT = process.env.PORT || 3000;
 // Configurar Handlebars com helpers
 app.engine('handlebars', handlebars.engine({ 
     defaultLayout: 'main',
+    runtimeOptions: {
+        allowProtoPropertiesByDefault: true,
+        allowProtoMethodsByDefault: true
+    },
     helpers: {
         eq: (a, b) => a === b
     }

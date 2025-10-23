@@ -79,7 +79,9 @@ router.get('/alunos', async (req, res) => {
                 through: { attributes: [] }
             }]
         });
-        res.render('aluno/alunoList', { alunos });
+        // Convert Sequelize instances to plain objects for Handlebars
+        const alunosPlain = alunos.map(a => a.toJSON());
+        res.render('aluno/alunoList', { alunos: alunosPlain });
     } catch (error) {
         console.error('Erro ao listar alunos:', error);
         res.render('aluno/alunoList', { alunos: [] });
@@ -109,7 +111,7 @@ router.get('/alunos/editar/:id', isAdmin, async (req, res) => {
         if (!aluno) {
             return res.redirect('/alunos');
         }
-        res.render('aluno/alunoUpdate', { aluno });
+        res.render('aluno/alunoUpdate', { aluno: aluno.toJSON() });
     } catch (error) {
         console.error('Erro ao buscar aluno:', error);
         res.redirect('/alunos');
@@ -142,7 +144,7 @@ router.get('/alunos/gerenciar-disciplinas/:id', isAdmin, async (req, res) => {
         
         res.render('aluno/alunoGerenciarDisciplinas', { 
             aluno: aluno.toJSON(),
-            todasDisciplinas 
+            todasDisciplinas: todasDisciplinas.map(d => d.toJSON())
         });
     } catch (error) {
         console.error('Erro ao buscar aluno:', error);
@@ -162,7 +164,9 @@ router.get('/disciplinas', async (req, res) => {
                 through: { attributes: [] }
             }]
         });
-        res.render('disciplina/disciplinaList', { disciplinas });
+        // Convert Sequelize instances to plain objects for Handlebars
+        const disciplinasPlain = disciplinas.map(d => d.toJSON());
+        res.render('disciplina/disciplinaList', { disciplinas: disciplinasPlain });
     } catch (error) {
         console.error('Erro ao listar disciplinas:', error);
         res.render('disciplina/disciplinaList', { disciplinas: [] });
@@ -192,7 +196,7 @@ router.get('/disciplinas/editar/:id', isAdmin, async (req, res) => {
         if (!disciplina) {
             return res.redirect('/disciplinas');
         }
-        res.render('disciplina/disciplinaUpdate', { disciplina });
+        res.render('disciplina/disciplinaUpdate', { disciplina: disciplina.toJSON() });
     } catch (error) {
         console.error('Erro ao buscar disciplina:', error);
         res.redirect('/disciplinas');
@@ -225,7 +229,7 @@ router.get('/disciplinas/gerenciar-alunos/:id', isAdmin, async (req, res) => {
         
         res.render('disciplina/disciplinaGerenciarAlunos', { 
             disciplina: disciplina.toJSON(),
-            todosAlunos 
+            todosAlunos: todosAlunos.map(a => a.toJSON())
         });
     } catch (error) {
         console.error('Erro ao buscar disciplina:', error);
@@ -280,17 +284,15 @@ router.get('/matriculas', isAdmin, async (req, res) => {
 router.get('/logs', isAdmin, async (req, res) => {
     try {
         const logs = await LogAcesso.find()
-            .sort({ timestamp: -1 })
+            .sort({ dataHora: -1 })
             .limit(100);
         
         res.render('log/logList', { 
             logs: logs.map(log => ({
                 _id: log._id.toString().substring(0, 8),
-                metodo: log.metodo,
-                url: log.url,
-                ip: log.ip,
-                userAgent: log.userAgent.substring(0, 50) + '...',
-                timestamp: new Date(log.timestamp).toLocaleString('pt-BR')
+                usuario: log.usuario,
+                rotaAcessada: log.rotaAcessada,
+                dataHora: new Date(log.dataHora).toLocaleString('pt-BR')
             }))
         });
     } catch (error) {

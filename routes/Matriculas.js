@@ -5,6 +5,40 @@ const registrarLogAcesso = require('../middleware/LogAcesso');
 
 router.use(registrarLogAcesso);
 
+// GET /matriculas - Listar todas as matrículas
+router.get('/', async (req, res) => {
+    try {
+        const alunos = await Aluno.findAll({
+            include: [{
+                model: Disciplina,
+                as: 'disciplinas',
+                through: { attributes: [] }
+            }]
+        });
+
+        const matriculas = [];
+        alunos.forEach(aluno => {
+            if (aluno.disciplinas && aluno.disciplinas.length > 0) {
+                aluno.disciplinas.forEach(disciplina => {
+                    matriculas.push({
+                        alunoId: aluno.id,
+                        alunoNome: aluno.nome,
+                        alunoEmail: aluno.email,
+                        disciplinaId: disciplina.id,
+                        disciplinaNome: disciplina.nome,
+                        disciplinaCodigo: disciplina.codigo,
+                        cargaHoraria: disciplina.cargaHoraria
+                    });
+                });
+            }
+        });
+
+        res.json(matriculas);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // GET /alunos/:id/disciplinas
 router.get('/alunos/:id/disciplinas', async (req, res) => {
     try {

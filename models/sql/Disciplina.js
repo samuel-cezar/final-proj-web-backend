@@ -7,6 +7,11 @@ const Disciplina = sequelize.define('Disciplina', {
         primaryKey: true,
         autoIncrement: true
     },
+    codigo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
     nome: {
         type: DataTypes.STRING,
         allowNull: false

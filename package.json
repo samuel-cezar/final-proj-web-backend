@@ -4,15 +4,7 @@
   "type": "commonjs",
   "private": true,
   "scripts": {
-    "dev": "node index.js",
-    "seed:usuarios": "node scripts/seedUsuario.js",
-    "start:mongo": "docker run -d --name mongodb -p 27017:27017 -e MONGO_INITDB_ROOT_USERNAME=admin -e MONGO_INITDB_ROOT_PASSWORD=password -v mongo_data:/data/db mongo",
-    "stop:mongo": "docker stop mongodb && docker rm mongodb",
-    "start:postgres": "docker run -d --name postgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=1234 -e POSTGRES_DB=postgres -v pg_data:/var/lib/postgresql/data postgres",
-    "stop:postgres": "docker stop postgres && docker rm postgres",
-    "compose:up": "docker compose up -d",
-    "compose:down": "docker compose down",
-    "compose:logs": "docker compose logs -f app"
+    "dev": "node index.js"
   },
   "engines": {
     "node": ">=20"

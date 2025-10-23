@@ -14,10 +14,8 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Método</th>
-                                <th>URL</th>
-                                <th>IP</th>
-                                <th>User Agent</th>
+                                <th>Usuário</th>
+                                <th>Rota Acessada</th>
                                 <th>Data/Hora</th>
                             </tr>
                         </thead>
@@ -26,22 +24,14 @@
                             <tr>
                                 <td><small>#{{this._id}}</small></td>
                                 <td>
-                                    {{#if (eq this.metodo 'GET')}}
-                                    <span class="badge bg-success">{{this.metodo}}</span>
-                                    {{else if (eq this.metodo 'POST')}}
-                                    <span class="badge bg-primary">{{this.metodo}}</span>
-                                    {{else if (eq this.metodo 'PUT')}}
-                                    <span class="badge bg-warning">{{this.metodo}}</span>
-                                    {{else if (eq this.metodo 'DELETE')}}
-                                    <span class="badge bg-danger">{{this.metodo}}</span>
+                                    {{#if (eq this.usuario 'usuario_anonimo')}}
+                                    <span class="badge bg-secondary">{{this.usuario}}</span>
                                     {{else}}
-                                    <span class="badge bg-secondary">{{this.metodo}}</span>
+                                    <span class="badge bg-primary">{{this.usuario}}</span>
                                     {{/if}}
                                 </td>
-                                <td><code>{{this.url}}</code></td>
-                                <td>{{this.ip}}</td>
-                                <td><small>{{this.userAgent}}</small></td>
-                                <td>{{this.timestamp}}</td>
+                                <td><code>{{this.rotaAcessada}}</code></td>
+                                <td>{{this.dataHora}}</td>
                             </tr>
                             {{/each}}
                         </tbody>
