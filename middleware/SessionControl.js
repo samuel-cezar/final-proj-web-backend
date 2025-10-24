@@ -1,7 +1,7 @@
 // Middleware para controlar sessões
 const sessionControl = (req, res, next) => {
     // Rotas públicas que não precisam de autenticação
-    const publicRoutes = ['/', '/login', '/logout', '/projetos', '/relatorio/conhecimentos'];
+    const publicRoutes = ['/', '/login', '/logout', '/projetos', '/projetos/palavra-chave', '/relatorio/conhecimentos'];
     
     // Rotas da API não precisam de sessão (podem usar outros métodos de auth)
     if (req.path.startsWith('/api/')) {
