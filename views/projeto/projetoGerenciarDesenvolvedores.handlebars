@@ -1,0 +1,133 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-people-fill"></i> Gerenciar Desenvolvedores - {{projeto.nome}}
+            </div>
+            <div class="card-body">
+                <h5 class="mb-3">Desenvolvedores Atuais</h5>
+                
+                {{#if projeto.desenvolvedores.length}}
+                <div class="list-group mb-4">
+                    {{#each projeto.desenvolvedores}}
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>{{this.nome}}</strong>
+                            <br>
+                            <small class="text-muted">{{this.email}}</small>
+                        </div>
+                        {{#if @root.projeto.desenvolvedores.length}}
+                        {{#unless @first}}
+                        <button class="btn btn-sm btn-danger" onclick="removerDesenvolvedor({{../projeto.id}}, {{this.id}})">
+                            <i class="bi bi-trash"></i> Remover
+                        </button>
+                        {{/unless}}
+                        {{/if}}
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <p class="text-muted">Nenhum desenvolvedor no projeto.</p>
+                {{/if}}
+                
+                <hr>
+                
+                <h5 class="mb-3">Adicionar Desenvolvedor</h5>
+                <div class="mb-3">
+                    <label for="searchAluno" class="form-label">Buscar aluno por nome ou email</label>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="searchAluno" 
+                               placeholder="Digite o nome ou email...">
+                        <button class="btn btn-outline-secondary" type="button" onclick="buscarAlunos()">
+                            <i class="bi bi-search"></i> Buscar
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="resultadosBusca" class="mb-3"></div>
+                
+                <a href="/projetos/meus" class="btn btn-secondary">
+                    <i class="bi bi-arrow-left"></i> Voltar
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+async function buscarAlunos() {
+    const query = document.getElementById('searchAluno').value;
+    if (!query || query.length < 2) {
+        alert('Digite pelo menos 2 caracteres para buscar');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/alunos/buscar/search?q=${encodeURIComponent(query)}`);
+        const alunos = await response.json();
+        
+        const container = document.getElementById('resultadosBusca');
+        if (alunos.length === 0) {
+            container.innerHTML = '<p class="text-muted">Nenhum aluno encontrado.</p>';
+            return;
+        }
+        
+        container.innerHTML = '<div class="list-group">' +
+            alunos.map(aluno => `
+                <div class="list-group-item d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>${aluno.nome}</strong><br>
+                        <small class="text-muted">${aluno.email}</small>
+                    </div>
+                    <button class="btn btn-sm btn-success" onclick="adicionarDesenvolvedor({{projeto.id}}, ${aluno.id})">
+                        <i class="bi bi-plus-circle"></i> Adicionar
+                    </button>
+                </div>
+            `).join('') +
+            '</div>';
+    } catch (error) {
+        alert('Erro ao buscar alunos');
+    }
+}
+
+async function adicionarDesenvolvedor(projetoId, desenvolvedorId) {
+    try {
+        const response = await fetch(`/api/projetos/${projetoId}/desenvolvedores`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ desenvolvedorId })
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao adicionar desenvolvedor');
+        }
+    } catch (error) {
+        alert('Erro ao adicionar desenvolvedor');
+    }
+}
+
+async function removerDesenvolvedor(projetoId, desenvolvedorId) {
+    if (!confirm('Tem certeza que deseja remover este desenvolvedor?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/projetos/${projetoId}/desenvolvedores/${desenvolvedorId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao remover desenvolvedor');
+        }
+    } catch (error) {
+        alert('Erro ao remover desenvolvedor');
+    }
+}
+</script>
+

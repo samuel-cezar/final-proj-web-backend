@@ -32,6 +32,35 @@
                         <input type="text" class="form-control" id="curso" name="curso" value="{{aluno.curso}}" placeholder="Ex: Engenharia de Software (opcional)">
                         <small class="text-muted">Campo opcional</small>
                     </div>
+
+                    <hr class="my-4">
+                    <h5 class="mb-3"><i class="bi bi-key-fill"></i> Alterar Credenciais (Opcional)</h5>
+                    
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i> Deixe os campos de senha em branco para manter a senha atual
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="novaSenha" class="form-label">Nova Senha</label>
+                        <input type="password" class="form-control" id="novaSenha" name="novaSenha" minlength="6" placeholder="Deixe em branco para não alterar">
+                        <small class="text-muted">Mínimo 6 caracteres</small>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="confirmarNovaSenha" class="form-label">Confirmar Nova Senha</label>
+                        <input type="password" class="form-control" id="confirmarNovaSenha" name="confirmarNovaSenha" minlength="6" placeholder="Confirme a nova senha">
+                    </div>
+
+                    {{#if aluno.usuario}}
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="admin" name="admin" value="true" {{#if aluno.usuario.admin}}checked{{/if}}>
+                        <label class="form-check-label" for="admin">
+                            <strong>Permissões de Administrador</strong>
+                            <br>
+                            <small class="text-muted">Administradores podem gerenciar o sistema</small>
+                        </label>
+                    </div>
+                    {{/if}}
                     
                     <div class="d-flex gap-2 justify-content-end">
                         <a href="/alunos" class="btn btn-secondary">
@@ -46,4 +75,29 @@
         </div>
     </div>
 </div>
+
+<script>
+// Validar se as senhas coincidem antes de enviar o formulário
+document.querySelector('form').addEventListener('submit', function(e) {
+    const novaSenha = document.getElementById('novaSenha').value;
+    const confirmarNovaSenha = document.getElementById('confirmarNovaSenha').value;
+    
+    // Se uma senha foi digitada, validar
+    if (novaSenha || confirmarNovaSenha) {
+        if (novaSenha !== confirmarNovaSenha) {
+            e.preventDefault();
+            alert('As senhas não coincidem. Por favor, verifique.');
+            document.getElementById('confirmarNovaSenha').focus();
+            return false;
+        }
+        
+        if (novaSenha.length < 6) {
+            e.preventDefault();
+            alert('A nova senha deve ter no mínimo 6 caracteres.');
+            document.getElementById('novaSenha').focus();
+            return false;
+        }
+    }
+});
+</script>
 

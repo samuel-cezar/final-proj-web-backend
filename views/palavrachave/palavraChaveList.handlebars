@@ -1,0 +1,97 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="bi bi-tags-fill"></i> Palavras-chave
+                </div>
+                {{#if admin}}
+                <a href="/palavras-chave/criar" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-circle"></i> Nova Palavra-chave
+                </a>
+                {{/if}}
+            </div>
+            <div class="card-body">
+                {{#if erro}}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{erro}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {{/if}}
+
+                {{#if sucesso}}
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    {{sucesso}}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {{/if}}
+
+                {{#if palavrasChave.length}}
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Descrição</th>
+                                {{#if admin}}
+                                <th style="width: 150px;">Ações</th>
+                                {{/if}}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each palavrasChave}}
+                            <tr>
+                                <td><strong>{{this.nome}}</strong></td>
+                                <td>{{this.descricao}}</td>
+                                {{#if ../admin}}
+                                <td>
+                                    <a href="/palavras-chave/editar/{{this._id}}" class="btn btn-sm btn-warning" title="Editar">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </a>
+                                    <button onclick="excluirPalavraChave('{{this._id}}', '{{this.nome}}')" 
+                                            class="btn btn-sm btn-danger" title="Excluir">
+                                        <i class="bi bi-trash-fill"></i>
+                                    </button>
+                                </td>
+                                {{/if}}
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{else}}
+                <p class="text-muted text-center mb-0">Nenhuma palavra-chave cadastrada.</p>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#if admin}}
+<script>
+async function excluirPalavraChave(id, nome) {
+    if (!confirm(`Tem certeza que deseja excluir a palavra-chave "${nome}"?`)) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`/api/palavras-chave/${id}`, {
+            method: 'DELETE'
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert(data.error || 'Erro ao excluir palavra-chave');
+            return;
+        }
+
+        window.location.reload();
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao excluir palavra-chave');
+    }
+}
+</script>
+{{/if}}
+

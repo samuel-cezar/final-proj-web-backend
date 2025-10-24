@@ -72,5 +72,68 @@ router.get('/matriculas', isAdmin, viewsController.matriculasList);
 
 router.get('/logs', isAdmin, viewsController.logsList);
 
+// ==================== PROJETOS ====================
+
+// Listar todos os projetos (público)
+router.get('/projetos', viewsController.projetosList);
+
+// Filtrar projetos por palavra-chave (público) - sem parâmetro
+router.get('/projetos/palavra-chave', viewsController.projetosPorPalavraChave);
+
+// Filtrar projetos por palavra-chave (público) - com parâmetro
+router.get('/projetos/palavra-chave/:palavraChaveId', viewsController.projetosPorPalavraChave);
+
+// Meus projetos
+router.get('/projetos/meus', viewsController.meusProjetosList);
+
+// Formulário criar projeto
+router.get('/projetos/criar', viewsController.projetoCreateForm);
+
+// Criar projeto
+router.post('/projetos/criar', viewsController.projetoCreate);
+
+// Formulário editar projeto
+router.get('/projetos/editar/:id', viewsController.projetoEditForm);
+
+// Editar projeto
+router.post('/projetos/editar/:id', viewsController.projetoEdit);
+
+// Gerenciar desenvolvedores
+router.get('/projetos/gerenciar-desenvolvedores/:id', viewsController.projetoGerenciarDesenvolvedores);
+
+// ==================== PALAVRAS-CHAVE ====================
+
+// Listar palavras-chave
+router.get('/palavras-chave', viewsController.palavrasChaveList);
+
+// Formulário criar palavra-chave (Admin)
+router.get('/palavras-chave/criar', isAdmin, viewsController.palavraChaveCreateForm);
+
+// Criar palavra-chave (Admin)
+router.post('/palavras-chave/criar', isAdmin, viewsController.palavraChaveCreate);
+
+// Formulário editar palavra-chave (Admin)
+router.get('/palavras-chave/editar/:id', isAdmin, viewsController.palavraChaveEditForm);
+
+// Editar palavra-chave (Admin)
+router.post('/palavras-chave/editar/:id', isAdmin, viewsController.palavraChaveEdit);
+
+// ==================== CONHECIMENTOS ====================
+
+// Meus conhecimentos (alunos)
+router.get('/conhecimentos/meus', viewsController.meusConhecimentosList);
+
+// Gerenciar conhecimentos (Admin)
+router.get('/conhecimentos/admin', isAdmin, viewsController.conhecimentosAdminList);
+router.get('/conhecimentos/admin/criar', isAdmin, viewsController.conhecimentoCreateForm);
+router.post('/conhecimentos/admin/criar', isAdmin, viewsController.conhecimentoCreate);
+router.get('/conhecimentos/admin/editar/:id', isAdmin, viewsController.conhecimentoEditForm);
+router.post('/conhecimentos/admin/editar/:id', isAdmin, viewsController.conhecimentoEdit);
+
+// ==================== RELATÓRIOS ====================
+
+// Relatório de conhecimentos (público)
+router.get('/relatorio/conhecimentos', viewsController.relatorioConhecimentos);
+
 module.exports = router;
 

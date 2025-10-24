@@ -1,0 +1,219 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-star-fill"></i> Meus Conhecimentos
+            </div>
+            <div class="card-body">
+                <h5 class="mb-3">Conhecimentos Cadastrados</h5>
+                
+                {{#if meusConhecimentos.length}}
+                <div class="table-responsive mb-4">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Conhecimento</th>
+                                <th>Descrição</th>
+                                <th>Nível</th>
+                                <th class="text-end">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each meusConhecimentos}}
+                            <tr>
+                                <td><strong>{{this.nome}}</strong></td>
+                                <td class="text-muted small">{{this.descricao}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="height: 20px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 style="width: {{multiply this.nivel 10}}%">
+                                                {{this.nivel}}/10
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="text-end">
+                                    <button class="btn btn-sm btn-warning" onclick="editarConhecimento({{this.id}}, {{this.nivel}})">
+                                        <i class="bi bi-pencil"></i> Editar Nível
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="removerConhecimento({{this.id}})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                {{else}}
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle"></i> Você ainda não cadastrou nenhum conhecimento.
+                </div>
+                {{/if}}
+                
+                <hr>
+                
+                <h5 class="mb-3">Adicionar Novo Conhecimento</h5>
+                <form id="formConhecimento" class="row g-3">
+                    <div class="col-md-6">
+                        <label for="conhecimentoId" class="form-label">Selecione um Conhecimento</label>
+                        <select class="form-select" id="conhecimentoId" required>
+                            <option value="">Escolha...</option>
+                            {{#each todosConhecimentos}}
+                            <option value="{{this.id}}">{{this.nome}}</option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="nivel" class="form-label">Nível de Conhecimento: <span id="nivelValue">5</span>/10</label>
+                        <input type="range" class="form-range" id="nivel" min="0" max="10" step="1" value="5">
+                        <div class="d-flex justify-content-between text-muted small">
+                            <span>Iniciante</span>
+                            <span>Intermediário</span>
+                            <span>Avançado</span>
+                        </div>
+                    </div>
+                    
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-plus-circle"></i> Adicionar Conhecimento
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Editar Nível -->
+<div class="modal fade" id="modalEditarNivel" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Nível de Conhecimento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label for="nivelEdit" class="form-label">Nível: <span id="nivelEditValue">5</span>/10</label>
+                <input type="range" class="form-range" id="nivelEdit" min="0" max="10" step="1" value="5">
+                <div class="d-flex justify-content-between text-muted small">
+                    <span>Iniciante</span>
+                    <span>Intermediário</span>
+                    <span>Avançado</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="salvarNivel()">Salvar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let conhecimentoEditandoId = null;
+let modalEditarNivel = null;
+
+// Garantir que o DOM está carregado
+document.addEventListener('DOMContentLoaded', function() {
+    modalEditarNivel = new bootstrap.Modal(document.getElementById('modalEditarNivel'));
+    
+    // Atualizar valor do slider (adicionar)
+    const nivelInput = document.getElementById('nivel');
+    const nivelValue = document.getElementById('nivelValue');
+    
+    nivelInput.addEventListener('input', function() {
+        nivelValue.textContent = this.value;
+    });
+    
+    // Atualizar valor do slider (editar)
+    const nivelEditInput = document.getElementById('nivelEdit');
+    const nivelEditValue = document.getElementById('nivelEditValue');
+    
+    nivelEditInput.addEventListener('input', function() {
+        nivelEditValue.textContent = this.value;
+    });
+    
+    // Adicionar conhecimento
+    document.getElementById('formConhecimento').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const conhecimentoId = document.getElementById('conhecimentoId').value;
+        const nivel = parseInt(document.getElementById('nivel').value);
+        
+        if (!conhecimentoId) {
+            alert('Selecione um conhecimento');
+            return;
+        }
+        
+        try {
+            const response = await fetch('/api/conhecimentos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ conhecimentoId: parseInt(conhecimentoId), nivel })
+            });
+            
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                const data = await response.json();
+                alert(data.error || 'Erro ao adicionar conhecimento');
+            }
+        } catch (error) {
+            alert('Erro ao adicionar conhecimento');
+        }
+    });
+});
+
+function editarConhecimento(id, nivelAtual) {
+    conhecimentoEditandoId = id;
+    document.getElementById('nivelEdit').value = nivelAtual;
+    document.getElementById('nivelEditValue').textContent = nivelAtual;
+    modalEditarNivel.show();
+}
+
+async function salvarNivel() {
+    const nivel = parseInt(document.getElementById('nivelEdit').value);
+    
+    try {
+        const response = await fetch('/api/conhecimentos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ conhecimentoId: conhecimentoEditandoId, nivel })
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao atualizar nível');
+        }
+    } catch (error) {
+        alert('Erro ao atualizar nível');
+    }
+}
+
+async function removerConhecimento(id) {
+    if (!confirm('Tem certeza que deseja remover este conhecimento?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/conhecimentos/${id}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao remover conhecimento');
+        }
+    } catch (error) {
+        alert('Erro ao remover conhecimento');
+    }
+}
+</script>
+

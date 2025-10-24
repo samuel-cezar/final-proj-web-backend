@@ -1,0 +1,288 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span>
+                    <i class="bi bi-folder-fill"></i> 
+                    {{#if apenasMeus}}Meus Projetos{{else}}Todos os Projetos{{/if}}
+                </span>
+                {{#if login}}
+                <a href="/projetos/criar" class="btn btn-light btn-sm">
+                    <i class="bi bi-plus-circle"></i> Novo Projeto
+                </a>
+                {{/if}}
+            </div>
+            <div class="card-body">
+                {{#if projetos.length}}
+                <div class="row">
+                    {{#each projetos}}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 {{#if this.ehMeuProjeto}}border-primary{{/if}}">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    {{this.nome}}
+                                    {{#if this.ehMeuProjeto}}
+                                    <span class="badge bg-primary">Meu</span>
+                                    {{/if}}
+                                </h5>
+                                <p class="card-text text-muted small">{{this.resumo}}</p>
+                                
+                                {{#if this.palavrasChave.length}}
+                                <div class="mb-3">
+                                    {{#each this.palavrasChave}}
+                                    <span class="badge bg-secondary me-1">{{this.nome}}</span>
+                                    {{/each}}
+                                </div>
+                                {{/if}}
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-people"></i> Desenvolvedores:
+                                    </small>
+                                    <div>
+                                        <span class="text-dark">{{this.desenvolvedoresTexto}}</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="d-flex gap-2 flex-wrap">
+                                    <a href="{{this.linkExterno}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-link-45deg"></i> Ver Projeto
+                                    </a>
+                                    {{#if this.ehMeuProjeto}}
+                                    <a href="/projetos/editar/{{this.id}}" class="btn btn-sm btn-warning">
+                                        <i class="bi bi-pencil"></i> Editar
+                                    </a>
+                                    {{#if this.podeGerenciar}}
+                                    <button class="btn btn-sm btn-info" onclick="abrirModalDesenvolvedores({{this.id}}, '{{this.nome}}')">
+                                        <i class="bi bi-people"></i> Devs
+                                    </button>
+                                    {{/if}}
+                                    <button class="btn btn-sm btn-danger" onclick="deletarProjeto({{this.id}})">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <div class="empty-state">
+                    <div class="empty-state-icon"><i class="bi bi-inbox"></i></div>
+                    <div class="empty-state-text">
+                        {{#if apenasMeus}}
+                        Você ainda não tem projetos cadastrados
+                        {{else}}
+                        Nenhum projeto cadastrado no sistema
+                        {{/if}}
+                    </div>
+                    {{#if login}}
+                    <p class="text-muted">Comece adicionando um novo projeto.</p>
+                    <a href="/projetos/criar" class="btn btn-primary mt-3">
+                        <i class="bi bi-plus-circle"></i> Criar Primeiro Projeto
+                    </a>
+                    {{else}}
+                    <p class="text-muted">Ainda não há projetos disponíveis para visualização.</p>
+                    {{/if}}
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Gerenciar Desenvolvedores -->
+<div class="modal fade" id="modalDesenvolvedores" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="bi bi-people"></i> Gerenciar Desenvolvedores - <span id="projetoNome"></span>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Desenvolvedores Atuais -->
+                <h6 class="mb-3">Desenvolvedores Atuais</h6>
+                <div id="listaDesenvolvedores" class="mb-4">
+                    <div class="text-center text-muted">
+                        <span class="spinner-border spinner-border-sm"></span> Carregando...
+                    </div>
+                </div>
+
+                <!-- Adicionar Novo Desenvolvedor -->
+                <hr>
+                <h6 class="mb-3">Adicionar Desenvolvedor</h6>
+                <div class="mb-3">
+                    <input type="text" id="buscaAluno" class="form-control" placeholder="Buscar aluno por nome ou email...">
+                </div>
+                <div id="listaAlunos" style="max-height: 300px; overflow-y: auto;">
+                    {{#each todosAlunos}}
+                    <div class="aluno-item d-flex justify-content-between align-items-center p-2 border-bottom" data-aluno-id="{{this.id}}">
+                        <div>
+                            <strong>{{this.nome}}</strong>
+                            <br>
+                            <small class="text-muted">{{this.email}}</small>
+                        </div>
+                        <button class="btn btn-sm btn-success" onclick="adicionarDesenvolvedor({{this.id}}, '{{this.nome}}')">
+                            <i class="bi bi-plus-circle"></i> Adicionar
+                        </button>
+                    </div>
+                    {{/each}}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let projetoAtualId = null;
+let modalDesenvolvedores = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    modalDesenvolvedores = new bootstrap.Modal(document.getElementById('modalDesenvolvedores'));
+    
+    // Busca de alunos (respeitando os já adicionados)
+    document.getElementById('buscaAluno')?.addEventListener('input', function(e) {
+        const termo = e.target.value.toLowerCase();
+        document.querySelectorAll('.aluno-item').forEach(item => {
+            const alunoId = parseInt(item.getAttribute('data-aluno-id'));
+            const texto = item.textContent.toLowerCase();
+            
+            // Verificar se está na lista de desenvolvedores atual
+            const listaDevs = document.getElementById('listaDesenvolvedores');
+            const jaEhDev = listaDevs && listaDevs.innerHTML.includes(`onclick="removerDesenvolvedor(${alunoId},`);
+            
+            // Mostrar apenas se não for desenvolvedor e bater com a busca
+            if (jaEhDev) {
+                item.style.display = 'none';
+            } else if (termo === '' || texto.includes(termo)) {
+                item.style.display = '';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    });
+});
+
+async function abrirModalDesenvolvedores(projetoId, projetoNome) {
+    projetoAtualId = projetoId;
+    document.getElementById('projetoNome').textContent = projetoNome;
+    modalDesenvolvedores.show();
+    await carregarDesenvolvedores();
+}
+
+async function carregarDesenvolvedores() {
+    try {
+        const response = await fetch(`/api/projetos/${projetoAtualId}`);
+        const projeto = await response.json();
+        
+        const listaHtml = projeto.desenvolvedores.length > 0
+            ? projeto.desenvolvedores.map(dev => `
+                <div class="d-flex justify-content-between align-items-center p-2 border-bottom">
+                    <div>
+                        <strong>${dev.nome}</strong>
+                        <br>
+                        <small class="text-muted">${dev.email}</small>
+                    </div>
+                    <button class="btn btn-sm btn-danger" onclick="removerDesenvolvedor(${dev.id}, '${dev.nome}')">
+                        <i class="bi bi-trash"></i> Remover
+                    </button>
+                </div>
+            `).join('')
+            : '<p class="text-muted text-center">Nenhum desenvolvedor ainda.</p>';
+        
+        document.getElementById('listaDesenvolvedores').innerHTML = listaHtml;
+        
+        // Filtrar alunos já adicionados da lista de disponíveis
+        const desenvolvedoresIds = projeto.desenvolvedores.map(d => d.id);
+        document.querySelectorAll('.aluno-item').forEach(item => {
+            const alunoId = parseInt(item.getAttribute('data-aluno-id'));
+            if (desenvolvedoresIds.includes(alunoId)) {
+                item.style.display = 'none';
+            } else {
+                item.style.display = '';
+            }
+        });
+        
+        // Resetar busca
+        const campoBusca = document.getElementById('buscaAluno');
+        if (campoBusca) {
+            campoBusca.value = '';
+        }
+    } catch (error) {
+        console.error('Erro ao carregar desenvolvedores:', error);
+        document.getElementById('listaDesenvolvedores').innerHTML = 
+            '<p class="text-danger">Erro ao carregar desenvolvedores.</p>';
+    }
+}
+
+async function adicionarDesenvolvedor(desenvolvedorId, desenvolvedorNome) {
+    if (!confirm(`Adicionar ${desenvolvedorNome} como desenvolvedor?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/projetos/${projetoAtualId}/desenvolvedores`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ desenvolvedorId })
+        });
+        
+        if (response.ok) {
+            await carregarDesenvolvedores();
+            // Atualizar a página após 500ms para refletir mudanças na lista
+            setTimeout(() => window.location.reload(), 500);
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao adicionar desenvolvedor');
+        }
+    } catch (error) {
+        alert('Erro ao adicionar desenvolvedor');
+    }
+}
+
+async function removerDesenvolvedor(desenvolvedorId, desenvolvedorNome) {
+    if (!confirm(`Remover ${desenvolvedorNome} do projeto?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/projetos/${projetoAtualId}/desenvolvedores/${desenvolvedorId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            await carregarDesenvolvedores();
+            alert('Desenvolvedor removido com sucesso!');
+            // Recarregar página para atualizar a contagem
+            setTimeout(() => window.location.reload(), 1000);
+        } else {
+            const data = await response.json();
+            alert(data.error || 'Erro ao remover desenvolvedor');
+        }
+    } catch (error) {
+        alert('Erro ao remover desenvolvedor');
+    }
+}
+
+function deletarProjeto(id) {
+    if (confirm('Tem certeza que deseja excluir este projeto?')) {
+        fetch(`/api/projetos/${id}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.reload();
+            } else {
+                alert('Erro ao excluir projeto');
+            }
+        });
+    }
+}
+</script>
+

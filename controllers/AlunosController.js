@@ -68,6 +68,33 @@ class AlunosController {
             res.status(500).json({ error: error.message });
         }
     }
+
+    // GET /api/alunos/buscar?q=termo
+    async buscar(req, res) {
+        try {
+            const { q } = req.query;
+            const { Op } = require('sequelize');
+
+            if (!q) {
+                return res.status(400).json({ error: 'Parâmetro de busca "q" é obrigatório' });
+            }
+
+            const alunos = await Aluno.findAll({
+                where: {
+                    [Op.or]: [
+                        { nome: { [Op.iLike]: `%${q}%` } },
+                        { email: { [Op.iLike]: `%${q}%` } }
+                    ]
+                },
+                attributes: ['id', 'nome', 'email', 'matricula'],
+                limit: 10
+            });
+
+            res.json(alunos);
+        } catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    }
 }
 
 module.exports = new AlunosController();

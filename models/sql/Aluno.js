@@ -30,6 +30,14 @@ const Aluno = sequelize.define('Aluno', {
     curso: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    usuarioId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'usuarios',
+            key: 'id'
+        }
     }
 }, {
     tableName: 'alunos',

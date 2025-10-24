@@ -4,7 +4,13 @@
   "type": "commonjs",
   "private": true,
   "scripts": {
-    "dev": "node index.js"
+    "dev": "node index.js",
+    "start": "node index.js",
+    "seed": "node scripts/seedAll.js",
+    "seed:user": "node scripts/seedUsuario.js",
+    "seed:keywords": "node scripts/seedPalavraChave.js",
+    "seed:knowledge": "node scripts/seedConhecimento.js",
+    "fix:usuarios": "node scripts/fixUsuariosSemAluno.js"
   },
   "engines": {
     "node": ">=20"

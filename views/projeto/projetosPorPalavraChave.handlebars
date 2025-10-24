@@ -1,0 +1,101 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card mb-4">
+            <div class="card-header">
+                <i class="bi bi-filter-circle"></i> Filtrar Projetos por Palavra-chave
+            </div>
+            <div class="card-body">
+                <form id="formFiltro" class="row g-3">
+                    <div class="col-md-10">
+                        <select class="form-select" id="palavraChaveId" name="palavraChaveId">
+                            <option value="">Selecione uma palavra-chave...</option>
+                            {{#each palavrasChave}}
+                            <option value="{{this._id}}" {{#if this.selecionada}}selected{{/if}}>
+                                {{this.nome}}{{#if this.descricao}} - {{this.descricao}}{{/if}}
+                            </option>
+                            {{/each}}
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Filtrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {{#if palavraChaveSelecionada}}
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-folder-fill"></i> Projetos com "{{palavraChaveSelecionada.nome}}"
+            </div>
+            <div class="card-body">
+                {{#if projetos.length}}
+                <div class="row">
+                    {{#each projetos}}
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h5 class="card-title">{{this.nome}}</h5>
+                                <p class="card-text text-muted small">{{this.resumo}}</p>
+                                
+                                {{#if this.palavrasChave.length}}
+                                <div class="mb-3">
+                                    {{#each this.palavrasChave}}
+                                    <span class="badge bg-secondary me-1">{{this.nome}}</span>
+                                    {{/each}}
+                                </div>
+                                {{/if}}
+                                
+                                <div class="mb-3">
+                                    <small class="text-muted">
+                                        <i class="bi bi-people"></i> Desenvolvedores:
+                                    </small>
+                                    <div>
+                                        {{#each this.desenvolvedores}}
+                                        <span class="badge bg-info text-dark me-1">{{this.nome}}</span>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                                
+                                {{#if this.linkExterno}}
+                                <a href="{{this.linkExterno}}" target="_blank" class="btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-link-45deg"></i> Ver Projeto
+                                </a>
+                                {{/if}}
+                            </div>
+                        </div>
+                    </div>
+                    {{/each}}
+                </div>
+                {{else}}
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> Nenhum projeto encontrado com esta palavra-chave.
+                </div>
+                {{/if}}
+            </div>
+        </div>
+        {{else}}
+        <div class="card">
+            <div class="card-body text-center text-muted">
+                <i class="bi bi-funnel" style="font-size: 3rem;"></i>
+                <p class="mt-3">Selecione uma palavra-chave acima para filtrar os projetos</p>
+            </div>
+        </div>
+        {{/if}}
+    </div>
+</div>
+
+<script>
+document.getElementById('formFiltro').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const palavraChaveId = document.getElementById('palavraChaveId').value;
+    if (palavraChaveId) {
+        window.location.href = `/projetos/palavra-chave/${palavraChaveId}`;
+    } else {
+        alert('Selecione uma palavra-chave');
+    }
+});
+</script>
+

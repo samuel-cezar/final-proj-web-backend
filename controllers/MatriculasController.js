@@ -1,4 +1,4 @@
-const { Aluno, Disciplina } = require('../models/sql');
+const { Aluno, Disciplina, AlunoDisciplina } = require('../models/sql');
 
 class MatriculasController {
     // GET /api/matriculas - Listar todas as matrículas
@@ -68,7 +68,16 @@ class MatriculasController {
                 return res.status(404).json({ error: 'Aluno ou disciplina não encontrado' });
             }
 
-            await aluno.addDisciplina(disciplina);
+            // Verificar se já está matriculado
+            const jaMatriculado = await AlunoDisciplina.findOne({
+                where: { alunoId, disciplinaId }
+            });
+
+            if (jaMatriculado) {
+                return res.status(400).json({ error: 'Aluno já matriculado nesta disciplina' });
+            }
+
+            await AlunoDisciplina.create({ alunoId, disciplinaId });
             res.json({ message: 'Matrícula realizada com sucesso' });
         } catch (error) {
             res.status(500).json({ error: error.message });
@@ -87,7 +96,14 @@ class MatriculasController {
                 return res.status(404).json({ error: 'Aluno ou disciplina não encontrado' });
             }
 
-            await aluno.removeDisciplina(disciplina);
+            const resultado = await AlunoDisciplina.destroy({
+                where: { alunoId, disciplinaId }
+            });
+
+            if (resultado === 0) {
+                return res.status(404).json({ error: 'Matrícula não encontrada' });
+            }
+
             res.json({ message: 'Desmatrícula realizada com sucesso' });
         } catch (error) {
             res.status(500).json({ error: error.message });

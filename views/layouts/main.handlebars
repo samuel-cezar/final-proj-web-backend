@@ -16,7 +16,6 @@
                     <div class="logo-container-nav">
                         <img src="/images/logo.svg" alt="SA" />
                     </div>
-                    <span class="navbar-brand-text">Sistema Acadêmico</span>
                 </div>
                 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -54,17 +53,44 @@
                             </ul>
                         </li>
                         
-                        {{#if admin}}
-                        <li class="nav-item">
-                            <a class="nav-link" href="/matriculas">
-                                <i class="bi bi-clipboard-check-fill"></i> Matrículas
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-folder-fill"></i> Projetos
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/projetos"><i class="bi bi-list-ul"></i> Todos os Projetos</a></li>
+                                <li><a class="dropdown-item" href="/projetos/palavra-chave"><i class="bi bi-filter-circle"></i> Filtrar por Palavra-chave</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/projetos/criar"><i class="bi bi-plus-circle"></i> Criar Projeto</a></li>
+                                <li><a class="dropdown-item" href="/projetos/meus"><i class="bi bi-person-workspace"></i> Meus Projetos</a></li>
+                            </ul>
                         </li>
                         
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logs">
-                                <i class="bi bi-file-text-fill"></i> Logs
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-star-fill"></i> Conhecimentos
                             </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/conhecimentos/meus"><i class="bi bi-person-badge"></i> Meus Conhecimentos</a></li>
+                                {{#if admin}}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/conhecimentos/admin"><i class="bi bi-gear-fill"></i> Gerenciar Conhecimentos</a></li>
+                                {{/if}}
+                            </ul>
+                        </li>
+                        
+                        {{#if admin}}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle icon-only-dropdown" href="#" role="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-gear-fill"></i>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/relatorio/conhecimentos"><i class="bi bi-bar-chart-fill"></i> Relatório</a></li>
+                                <li><a class="dropdown-item" href="/palavras-chave"><i class="bi bi-tags-fill"></i> Palavras-chave</a></li>
+                                <li><a class="dropdown-item" href="/logs"><i class="bi bi-file-text-fill"></i> Logs</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="/matriculas"><i class="bi bi-clipboard-check-fill"></i> Matrículas</a></li>
+                            </ul>
                         </li>
                         {{/if}}
                         

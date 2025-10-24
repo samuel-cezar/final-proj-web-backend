@@ -1,0 +1,132 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-bar-chart-fill"></i> Relatório de Conhecimentos - Proporção de Alunos
+            </div>
+            <div class="card-body">
+                <p class="lead text-center mb-4">
+                    Visualize a proporção de alunos que dominam cada conhecimento cadastrado no sistema
+                </p>
+
+                {{#if erro}}
+                <div class="alert alert-danger">
+                    {{erro}}
+                </div>
+                {{/if}}
+
+                {{#if dados.length}}
+                <div class="row mb-4">
+                    <div class="col-lg-8 mx-auto">
+                        <canvas id="chartConhecimentos"></canvas>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Conhecimento</th>
+                                <th>Alunos com este conhecimento</th>
+                                <th>Total de alunos</th>
+                                <th>Proporção</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#each dados}}
+                            <tr>
+                                <td><strong>{{this.conhecimento}}</strong></td>
+                                <td>{{this.alunosComConhecimento}}</td>
+                                <td>{{this.totalAlunos}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <div class="progress flex-grow-1 me-2" style="width: 200px;">
+                                            <div class="progress-bar bg-success" role="progressbar" 
+                                                 style="width: {{this.percentual}}%">
+                                                {{this.percentual}}%
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="alert alert-info mt-4">
+                    <i class="bi bi-info-circle"></i>
+                    <strong>Observação:</strong> Este relatório considera todos os alunos cadastrados no sistema
+                    e mostra quantos deles possuem cada conhecimento cadastrado em seu perfil.
+                </div>
+                {{else}}
+                <div class="alert alert-warning text-center">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    Não há dados suficientes para gerar o relatório. 
+                    Certifique-se de que existem alunos e conhecimentos cadastrados.
+                </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</div>
+
+{{#if dados.length}}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script>
+const ctx = document.getElementById('chartConhecimentos');
+
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: [{{#each dados}}'{{this.conhecimento}}',{{/each}}],
+        datasets: [{
+            label: 'Proporção de Alunos (%)',
+            data: [{{#each dados}}{{this.percentual}},{{/each}}],
+            backgroundColor: 'rgba(25, 135, 84, 0.7)',
+            borderColor: 'rgba(25, 135, 84, 1)',
+            borderWidth: 2
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {
+            legend: {
+                display: true,
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Proporção de Alunos por Conhecimento',
+                font: {
+                    size: 16
+                }
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                max: 100,
+                ticks: {
+                    callback: function(value) {
+                        return value + '%';
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Percentual de Alunos'
+                }
+            },
+            x: {
+                title: {
+                    display: true,
+                    text: 'Conhecimentos'
+                }
+            }
+        }
+    }
+});
+</script>
+{{/if}}
+

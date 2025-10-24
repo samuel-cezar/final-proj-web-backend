@@ -12,6 +12,9 @@ const alunosRoutes = require('./routes/Alunos');
 const disciplinasRoutes = require('./routes/Disciplinas');
 const matriculasRoutes = require('./routes/Matriculas');
 const logsRoutes = require('./routes/Logs');
+const projetosRoutes = require('./routes/Projetos');
+const conhecimentosRoutes = require('./routes/Conhecimentos');
+const palavrasChaveRoutes = require('./routes/PalavrasChave');
 
 // Importar middleware
 const registrarLogAcesso = require('./middleware/LogAcesso');
@@ -28,7 +31,8 @@ app.engine('handlebars', handlebars.engine({
         allowProtoMethodsByDefault: true
     },
     helpers: {
-        eq: (a, b) => a === b
+        eq: (a, b) => a === b,
+        multiply: (a, b) => a * b
     }
 }));
 app.set('view engine', 'handlebars');
@@ -56,6 +60,9 @@ app.use('/api/alunos', alunosRoutes);
 app.use('/api/disciplinas', disciplinasRoutes);
 app.use('/api/matriculas', matriculasRoutes);
 app.use('/api/logs', logsRoutes);
+app.use('/api/projetos', projetosRoutes);
+app.use('/api/conhecimentos', conhecimentosRoutes);
+app.use('/api/palavras-chave', palavrasChaveRoutes);
 
 // Importar rotas de views
 const viewRoutes = require('./routes/ViewRoutes');

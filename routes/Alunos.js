@@ -9,6 +9,9 @@ router.use(registrarLogAcesso);
 // GET /alunos
 router.get('/', alunosController.index);
 
+// GET /alunos/buscar/search?q=termo (deve vir antes de /:id)
+router.get('/buscar/search', alunosController.buscar);
+
 // GET /alunos/:id
 router.get('/:id', alunosController.show);
 

@@ -1,10 +1,15 @@
 // Middleware para controlar sessões
 const sessionControl = (req, res, next) => {
     // Rotas públicas que não precisam de autenticação
-    const publicRoutes = ['/', '/login', '/logout'];
+    const publicRoutes = ['/', '/login', '/logout', '/projetos', '/relatorio/conhecimentos'];
     
     // Rotas da API não precisam de sessão (podem usar outros métodos de auth)
     if (req.path.startsWith('/api/')) {
+        return next();
+    }
+    
+    // Permitir acesso público a rotas de projetos por palavra-chave
+    if (req.path.startsWith('/projetos/palavra-chave/')) {
         return next();
     }
     
@@ -13,8 +18,8 @@ const sessionControl = (req, res, next) => {
         return next();
     }
     
-    // Se não está logado e tenta acessar rota protegida, redireciona para login
-    res.redirect('/login');
+    // Se não está logado e tenta acessar rota protegida, redireciona para home pública
+    res.redirect('/');
 };
 
 // Middleware para verificar se usuário é admin
@@ -33,6 +38,11 @@ const isAdmin = (req, res, next) => {
 const addSessionToLocals = (req, res, next) => {
     res.locals.login = req.session.usuario?.nome;
     res.locals.admin = req.session.usuario?.admin || false;
+    res.locals.userId = req.session.usuario?.alunoId;
+    // Também adicionar userId diretamente à sessão para facilitar acesso
+    if (!req.session.userId) {
+        req.session.userId = req.session.usuario?.alunoId;
+    }
     next();
 };
 
